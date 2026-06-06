@@ -9,37 +9,31 @@
 </head>
 <body>
 
-    <header>
- 		<table border = "0">
-			<tr>
-				<td>
-				<img src="logo1.png" atl="logo" width="200px" >
-				</td>
-				<td>
-				<h1>QuickBite</h1>
-				</td>
-			</tr>
-		</table>
-		
-		<nav>
-			<ul>
-				<li><a href="index.html">Home</a></li>
-                    		<li><a href="menu.html">Menu</a></li>
-                		<li><a href="cart.html">Cart</a></li>
-                		<li><a href="login.html">Login</a></li>
-			</ul>
-		</nav>
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="brand">
+          <img src="logo1.png" class="logo" alt="QuickBite logo">
+          <h1 class="site-title">QuickBite</h1>
+        </div>
 
+        <nav class="main-nav" aria-label="Main navigation">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu.html">Menu</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <a href="cart.html" class="cart-btn">Cart</a>
+          <a href="login.html" class="login-link">Login</a>
+        </div>
+      </div>
     </header>
 
     <section class="hero">
-        <div class="hero-overlay">
-            <div class="hero-content">
-                <h2>Delicious Food Delivered Fast</h2>
-                <p>Order your favorite meals online.</p>
-                <a href="menu.html" class="btn">Order Now</a>
-            </div>
-        </div>
+	        <h2>Delicious Food Delivered Fast</h2>
+        <p>Order your favorite meals online.</p>
+        <a href="menu.html" class="btn">Order Now</a>
     </section>
 
     <section class="features">
@@ -53,11 +47,88 @@
             <p>Quick delivery to your doorstep.</p>
         </div>
 
+
         <div class="card">
             <h3>Easy Payment</h3>
             <p>Simple and secure payment methods.</p>
         </div>
     </section>
+<section class="featured-dishes">
+    <h2 class="featured-title">Featured Dishes</h2>
+    <p class="featured-subtitle">Try our chef's special recommendations</p>
+    <div class="dishes-container">
+        <div class="dish-card">
+            <div class="dish-image">
+                <img src="images/grilled_Salmon.jpg" alt="Grilled Salmon">
+                <span class="dish-price">RS.1500</span>
+            </div>
+            <div class="dish-info">
+                <h3>Grilled Salmon</h3>
+                <p>Fresh Atlantic salmon with seasonal vegetables and lemon butter sauce</p>
+                <button class="add-to-cart-btn">+ Add to Cart</button>
+            </div>
+        </div>
+        <div class="dish-card">
+            <div class="dish-image">
+                <img src="images/Artisan_Sandwich.jpg" alt="Artisan Sandwich">
+                <span class="dish-price">RS.1200.99</span>
+            </div>
+            <div class="dish-info">
+                <h3>Artisan Sandwich</h3>
+                <p>Freshly baked bread with premium deli meats and aged cheese</p>
+                <button class="add-to-cart-btn">+ Add to Cart</button>
+            </div>
+        </div>
+        <div class="dish-card">
+            <div class="dish-image">
+                <img src="images/Pan_Seared_Fish.jpg" alt="Pan-Seared Fish">
+                <span class="dish-price">Rs.1650</span>
+            </div>
+            <div class="dish-info">
+                <h3>Pan-Seared Fish</h3>
+                <p>Delicate white fish with garden vegetables and herb butter</p>
+                <button class="add-to-cart-btn">+ Add to Cart</button>
+            </div>
+        </div>
+    </div>
+    <div class="view-menu-container">
+        <a href="menu.html" class="view-menu-btn">View Full Menu &rarr;</a>
+    </div>
+</section>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h2>Delicious Bites</h2>
+      <p>Order delicious food from the comfort of your home.</p>
+    </div>
+    <div class="footer-section">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Menu</a></li>
+        <li><a href="#">Cart</a></li>
+        <li><a href="#">My Orders</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Contact</h3>
+      <p>Phone: (555) 123-4567</p>
+      <p>Email: info@deliciousbites.com</p>
+      <p>Hours: 9 AM - 10 PM</p>
+    </div>
+    <div class="footer-section">
+      <h3>Follow Us</h3>
+      <ul class="footer-social">
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Twitter</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr>
+  <div class="footer-bottom">
+    <p>© 2026 Delicious Bites. All rights reserved.</p>
+  </div>
+</footer>
 
 </body>
 </html>
