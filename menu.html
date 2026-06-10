@@ -2,24 +2,48 @@
 <html>
 <head>
 <title>Food Menu</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/menu.css">
 </head>
 <body>
+       
 
-<header>
-    <h1>Quick Bites</h1>
-<nav>
-<ul>
-<li><a href="maincourse.html">Main Course</a></li>
-<li><a href="pasta.html">Pasta</a></li>
-<li><a href="salads.html">Salads</a></li>
-<li><a href="burgers.html">Burgers</a></li>
-<li><a href="sandwiches.html">Sandwiches</a></li>
-<li><a href="featured dishes.html">Featured Dishes</a></li>
-</ul>
-</nav>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <img src="logo1.png" class="logo" alt="QuickBite logo">
+      <h1 class="site-title">QuickBite</h1>
+    </div>
 
+    <nav class="main-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html" class="login-link">Home</a></li>
+        <li><a href="menu.html" class="login-link">Menu</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href="cart.html" class="cart-btn">Cart</a>
+      <a href="login.html" class="login-link">Login</a>
+    </div>
+  </div>
 </header>
+
+<div class="menu-subnav">
+  <div class="subnav-inner">
+    <h2 class="subnav-title">Quick Bites Menu</h2>
+    <nav class="category-nav" aria-label="Menu categories">
+      <ul>
+        <li><a href="maincourse.html">Main Course</a></li>
+        <li><a href="pasta.html">Pasta</a></li>
+        <li><a href="salads.html">Salads</a></li>
+        <li><a href="burgers.html">Burgers</a></li>
+        <li><a href="sandwiches.html">Sandwiches</a></li>
+        <li><a href="featured dishes.html">Featured Dishes</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
 
 <div class="container">
 
@@ -31,7 +55,7 @@
 <div class="menu-grid">
 
 <a href="maincourse.html" class="card">
-    <img src="fried rice.jpg.jpeg">
+    <img src="images\fried rice.jpg.jpeg">
     <div class="card-content">
         <h3>Main Courses</h3>
         <p>Fried Rice, Koththu</p>
@@ -47,7 +71,7 @@
 </a>
 
 <a href="pasta.html" class="card">
-    <img src="pasta_menu.jpg.jpeg">
+    <img src="images\pasta_menu.jpg.jpeg">
     <div class="card-content">
         <h3>Pasta</h3>
         <p>Cheese Pasta</p>
@@ -55,7 +79,7 @@
 </a>
 
 <a href="salads.html" class="card">
-    <img src="salad menu.jpg.jpeg">
+    <img src="images\salad menu.jpg.jpeg">
     <div class="card-content">
         <h3>Salads</h3>
         <p>Chicken Salad, Vegetable Salad</p>
@@ -63,7 +87,7 @@
 </a>
 
 <a href="burgers.html" class="card">
-    <img src="burgers menu.png">
+    <img src="images\burgers menu.png">
     <div class="card-content">
         <h3>Burgers</h3>
         <p>Chicken Burger, Fish Burger</p>
@@ -71,7 +95,7 @@
 </a>
 
 <a href="featured dishes.html" class="card">
-    <img src="special food menu.jpg.jpeg">
+    <img src="images\special food menu.jpg.jpeg">
     <div class="card-content">
         <h3>Featured Dishes</h3>
         <p>Grilled Salmon,Artisan Sandwich,Pan-Seared Fish</p>
@@ -82,6 +106,41 @@
 </div>
 
 </div>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h2>Delicious Bites</h2>
+      <p>Order delicious food from the comfort of your home.</p>
+    </div>
+    <div class="footer-section">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Menu</a></li>
+        <li><a href="#">Cart</a></li>
+        <li><a href="#">My Orders</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Contact</h3>
+      <p>Phone: (555) 123-4567</p>
+      <p>Email: info@deliciousbites.com</p>
+      <p>Hours: 9 AM - 10 PM</p>
+    </div>
+    <div class="footer-section">
+      <h3>Follow Us</h3>
+      <ul class="footer-social">
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Twitter</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr>
+  <div class="footer-bottom">
+    <p>© 2026 Delicious Bites. All rights reserved.</p>
+  </div>
+</footer>
+
 
 </body>
 </html>
