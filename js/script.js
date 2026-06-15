@@ -1,5 +1,8 @@
 const CART_STORAGE_KEY = "quickbite-cart";
 const LEGACY_CART_STORAGE_KEY = "cart";
+const ORDERS_STORAGE_KEY = "quickbite-orders";
+const TOKEN_COUNTER_KEY = "quickbite-token-counter";
+const TOKEN_START = 1000;
 
 function normalizePrice(price) {
     const numericPrice = Number(price) || 0;
@@ -175,6 +178,60 @@ function getSummaryValues(cart) {
     };
 }
 
+function getOrders() {
+    try {
+        const storedOrders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY));
+        return Array.isArray(storedOrders) ? storedOrders : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function setOrders(orders) {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(Array.isArray(orders) ? orders : []));
+}
+
+function getNextTokenNumber() {
+    const currentValue = Number.parseInt(localStorage.getItem(TOKEN_COUNTER_KEY) || TOKEN_START, 10);
+    const nextValue = Number.isNaN(currentValue) ? TOKEN_START + 1 : currentValue + 1;
+    localStorage.setItem(TOKEN_COUNTER_KEY, String(nextValue));
+    return `QB${nextValue}`;
+}
+
+function getOrderStatusBadgeClass(status) {
+    const normalizedStatus = String(status || "").toLowerCase();
+
+    if (normalizedStatus === "ready") {
+        return "status-ready";
+    }
+
+    if (normalizedStatus === "completed") {
+        return "status-completed";
+    }
+
+    return "status-preparing";
+}
+
+function formatOrderDate(dateString) {
+    if (!dateString) {
+        return "Just now";
+    }
+
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+        return dateString;
+    }
+
+    return date.toLocaleString([], {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
 function renderCartPage() {
     const cartList = document.getElementById("cart-list");
 
@@ -321,8 +378,132 @@ function initCart() {
     renderCartPage();
 }
 
+function renderCheckoutPage() {
+    const checkoutSummary = document.getElementById("checkout-summary");
+    if (!checkoutSummary) {
+        return;
+    }
+
+    const cart = getCart();
+    const summary = getSummaryValues(cart);
+    const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const itemsHtml = cart.length
+        ? cart.map((item) => `<li><span>${item.name}</span><strong>${formatMoney(item.price * item.quantity)}</strong></li>`).join("")
+        : '<li><span>Your cart is empty</span><strong>Rs.0</strong></li>';
+
+    checkoutSummary.innerHTML = `
+        <div class="checkout-summary-block">
+            <p class="checkout-summary-label">Items</p>
+            <h3>${itemCount} ${itemCount === 1 ? "item" : "items"}</h3>
+        </div>
+        <ul class="checkout-items-list">${itemsHtml}</ul>
+        <div class="checkout-summary-row"><span>Subtotal</span><strong>${formatMoney(summary.subtotal)}</strong></div>
+        <div class="checkout-summary-row checkout-summary-total"><span>Total</span><strong>${formatMoney(summary.total)}</strong></div>
+    `;
+}
+
+function bindCheckoutForm() {
+    const checkoutForm = document.getElementById("checkout-form");
+    const successBox = document.getElementById("checkout-success");
+
+    if (!checkoutForm) {
+        return;
+    }
+
+    checkoutForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const cart = getCart();
+        if (!cart.length) {
+            if (successBox) {
+                successBox.innerHTML = "Please add items to your cart before placing an order.";
+                successBox.hidden = false;
+                successBox.className = "success-box error-box";
+            }
+            return;
+        }
+
+        const formData = new FormData(checkoutForm);
+        const tokenNumber = getNextTokenNumber();
+        const order = {
+            token: tokenNumber,
+            status: "Preparing",
+            name: String(formData.get("name") || ""),
+            phone: String(formData.get("phone") || ""),
+            email: String(formData.get("email") || ""),
+            items: cart,
+            total: getSummaryValues(cart).total,
+            createdAt: new Date().toISOString()
+        };
+
+        const orders = getOrders();
+        orders.unshift(order);
+        setOrders(orders);
+
+        setCart([]);
+        updateCartCount();
+
+        if (successBox) {
+            successBox.innerHTML = `
+                <strong>Order Successful!</strong>
+                <p>Your Token Number: <span>${tokenNumber}</span></p>
+                <a href="myorders.html" class="view-orders-link">View My Orders</a>
+            `;
+            successBox.hidden = false;
+            successBox.className = "success-box";
+        }
+
+        checkoutForm.reset();
+        renderCheckoutPage();
+    });
+}
+
+function renderMyOrdersPage() {
+    const ordersList = document.getElementById("orders-list");
+
+    if (!ordersList) {
+        return;
+    }
+
+    const storedOrders = getOrders();
+    const demoOrders = storedOrders.length ? storedOrders : [
+        { token: "QB1001", status: "Preparing", name: "Demo Customer", createdAt: new Date().toISOString(), total: 0 },
+        { token: "QB1002", status: "Ready", name: "Demo Customer", createdAt: new Date().toISOString(), total: 0 }
+    ];
+
+    ordersList.innerHTML = demoOrders.map((order) => `
+        <div class="order-row">
+            <span class="order-token">${order.token}</span>
+            <span class="order-status ${getOrderStatusBadgeClass(order.status)}">${order.status}</span>
+            <span class="order-name">${order.name || "Guest"}</span>
+            <span class="order-date">${formatOrderDate(order.createdAt)}</span>
+        </div>
+    `).join("");
+}
+
+function initCheckoutPage() {
+    renderCheckoutPage();
+    bindCheckoutForm();
+    updateCartCount();
+}
+
+function initMyOrdersPage() {
+    renderMyOrdersPage();
+    updateCartCount();
+}
+
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initCart);
 } else {
     initCart();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+        initCheckoutPage();
+        initMyOrdersPage();
+    });
+} else {
+    initCheckoutPage();
+    initMyOrdersPage();
 }

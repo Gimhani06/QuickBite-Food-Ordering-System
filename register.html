@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - QuickBite</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page register-page">
+
+<header class="site-header">
+    <div class="header-inner">
+        <div class="brand">
+            <img src="logo1.png" class="logo" alt="QuickBite logo">
+            <h1 class="site-title">QuickBite</h1>
+        </div>
+
+        <nav class="main-nav" aria-label="Main navigation">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="menu.html">Menu</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <a href="cart.html" class="cart-btn">Cart</a>
+            <a href="login.html" class="login-link">Login</a>
+        </div>
+    </div>
+</header>
+
+<main class="login-shell">
+    <section class="login-hero">
+        <div class="login-icon" aria-hidden="true">↦</div>
+        <h1>Create Account</h1>
+        <p>Register to start ordering your favorite meals</p>
+    </section>
+
+    <section class="form-container" aria-label="Register form">
+        <form action="register.php" method="POST">
+            <label for="full_name">Full Name</label>
+            <input id="full_name" type="text" name="full_name" placeholder="Your full name" required>
+
+            <label for="register_email">Email Address</label>
+            <input id="register_email" type="email" name="email" placeholder="you@example.com" required>
+
+            <label for="register_password">Password</label>
+            <input id="register_password" type="password" name="password" placeholder="Enter password" required>
+
+            <label for="confirm_password">Confirm Password</label>
+            <input id="confirm_password" type="password" name="confirm_password" placeholder="Confirm password" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p class="register-note">
+            Already have an account? <a href="login.html">Sign in</a>
+        </p>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h2>Delicious Bites</h2>
+            <p>Order delicious food from the comfort of your home.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">Menu</a></li>
+                <li><a href="#">Cart</a></li>
+                <li><a href="#">My Orders</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <p>Phone: (555) 123-4567</p>
+            <p>Email: info@deliciousbites.com</p>
+            <p>Hours: 9 AM - 10 PM</p>
+        </div>
+        <div class="footer-section">
+            <h3>Follow Us</h3>
+            <ul class="footer-social">
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">Twitter</a></li>
+                <li><a href="#">Instagram</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr>
+    <div class="footer-bottom">
+        <p>© 2026 Delicious Bites. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>
