@@ -39,17 +39,31 @@
     <div class="checkout-layout">
         <section class="checkout-card">
             <form id="checkout-form" action="checkout.php" method="POST">
+
                 <label for="checkout-name">Name</label>
-                <input id="checkout-name" name="name" type="text" placeholder="Your name" required>
+                <input id="checkout-name" name="name" type="text" required>
 
                 <label for="checkout-phone">Phone Number</label>
-                <input id="checkout-phone" name="phone" type="tel" placeholder="07x xxx xxxx" required>
+                <input id="checkout-phone" name="phone" type="tel" required>
 
                 <label for="checkout-email">Email</label>
-                <input id="checkout-email" name="email" type="email" placeholder="you@example.com" required>
+                <input id="checkout-email" name="email" type="email" required>
 
-                <button type="submit">Place Order</button>
-            </form>
+                <label>Payment Method</label>
+
+                <input type="radio" name="payment_method" value="Cash" required> Cash
+                <br>
+
+                <input type="radio" name="payment_method" value="Card"> Card
+                <br>
+
+                <input type="radio" name="payment_method" value="Online Banking"> Online Banking
+
+                <br><br>
+
+                <button type="submit">Pay Now</button>
+
+</form>
 
             <div id="checkout-success" class="success-box" hidden></div>
         </section>
