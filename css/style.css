@@ -697,8 +697,8 @@
     font-size: 0.98rem;
 }
 
-.checkout-card input,
-.register-page .form-container input {
+.checkout-card input:not([type="radio"]),
+.register-page .form-container input:not([type="radio"]) {
     width: 100%;
     padding: 14px 16px;
     margin-bottom: 20px;
@@ -709,8 +709,8 @@
     color: #111827;
 }
 
-.checkout-card input:focus,
-.register-page .form-container input:focus {
+.checkout-card input:not([type="radio"]):focus,
+.register-page .form-container input:not([type="radio"]):focus {
     outline: none;
     border-color: #ff7a18;
     box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.12);

@@ -30,9 +30,18 @@ function normalizeCart(cart) {
     }));
 }
 
+function getScopedCartKey() {
+    const userId = document.body.dataset.userId;
+    if (userId) {
+        return `${CART_STORAGE_KEY}-${userId}`;
+    }
+    return CART_STORAGE_KEY;
+}
+
 function getCart() {
     try {
-        const storedCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY));
+        const scopedKey = getScopedCartKey();
+        const storedCart = JSON.parse(localStorage.getItem(scopedKey));
         if (Array.isArray(storedCart)) {
             const normalizedCart = normalizeCart(storedCart);
             if (normalizedCart.some((item, index) => item.price !== storedCart[index]?.price || item.quantity !== storedCart[index]?.quantity)) {
@@ -41,10 +50,15 @@ function getCart() {
             return normalizedCart;
         }
 
-        const legacyCart = JSON.parse(localStorage.getItem(LEGACY_CART_STORAGE_KEY));
+        // Migrate guest cart to logged-in user cart
+        const legacyCart = JSON.parse(localStorage.getItem(LEGACY_CART_STORAGE_KEY)) || JSON.parse(localStorage.getItem(CART_STORAGE_KEY));
         if (Array.isArray(legacyCart)) {
             const normalizedCart = normalizeCart(legacyCart);
             setCart(normalizedCart);
+            if (scopedKey !== CART_STORAGE_KEY) {
+                localStorage.removeItem(CART_STORAGE_KEY);
+                localStorage.removeItem(LEGACY_CART_STORAGE_KEY);
+            }
             return normalizedCart;
         }
 
@@ -57,8 +71,11 @@ function getCart() {
 function setCart(cart) {
     const normalizedCart = normalizeCart(cart);
     const cartJson = JSON.stringify(normalizedCart);
-    localStorage.setItem(CART_STORAGE_KEY, cartJson);
-    localStorage.setItem(LEGACY_CART_STORAGE_KEY, cartJson);
+    const scopedKey = getScopedCartKey();
+    localStorage.setItem(scopedKey, cartJson);
+    if (scopedKey === CART_STORAGE_KEY) {
+        localStorage.setItem(LEGACY_CART_STORAGE_KEY, cartJson);
+    }
 }
 
 function formatMoney(value) {
@@ -411,50 +428,24 @@ function bindCheckoutForm() {
     }
 
     checkoutForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
         const cart = getCart();
         if (!cart.length) {
+            event.preventDefault();
             if (successBox) {
                 successBox.innerHTML = "Please add items to your cart before placing an order.";
                 successBox.hidden = false;
                 successBox.className = "success-box error-box";
+            } else {
+                alert("Please add items to your cart before placing an order.");
             }
             return;
         }
 
-        const formData = new FormData(checkoutForm);
-        const tokenNumber = getNextTokenNumber();
-        const order = {
-            token: tokenNumber,
-            status: "Preparing",
-            name: String(formData.get("name") || ""),
-            phone: String(formData.get("phone") || ""),
-            email: String(formData.get("email") || ""),
-            items: cart,
-            total: getSummaryValues(cart).total,
-            createdAt: new Date().toISOString()
-        };
-
-        const orders = getOrders();
-        orders.unshift(order);
-        setOrders(orders);
-
-        setCart([]);
-        updateCartCount();
-
-        if (successBox) {
-            successBox.innerHTML = `
-                <strong>Order Successful!</strong>
-                <p>Your Token Number: <span>${tokenNumber}</span></p>
-                <a href="myorders.html" class="view-orders-link">View My Orders</a>
-            `;
-            successBox.hidden = false;
-            successBox.className = "success-box";
+        // Set hidden input with cart JSON data
+        const cartInput = document.getElementById("checkout-cart-data");
+        if (cartInput) {
+            cartInput.value = JSON.stringify(cart);
         }
-
-        checkoutForm.reset();
-        renderCheckoutPage();
     });
 }
 
@@ -462,6 +453,11 @@ function renderMyOrdersPage() {
     const ordersList = document.getElementById("orders-list");
 
     if (!ordersList) {
+        return;
+    }
+
+    // If we are on myorders.php, let the server handle order rendering
+    if (window.location.pathname.includes("myorders.php")) {
         return;
     }
 
@@ -507,3 +503,123 @@ if (document.readyState === "loading") {
     initCheckoutPage();
     initMyOrdersPage();
 }
+
+// --- LOGIN & REGISTER FORM VALIDATION ---
+
+function validateLoginForm() {
+    const loginForm = document.querySelector('form[action="login.php"]');
+    if (!loginForm) return;
+
+    loginForm.addEventListener("submit", (event) => {
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        
+        // පැරණි Error Messages තියෙනවා නම් ඉවත් කිරීම
+        removeExistingErrors(loginForm);
+
+        let hasError = false;
+
+        // 1. Email පරික්ෂාව
+        if (!emailInput.value.trim()) {
+            showInputError(emailInput, "Email address is required.");
+            hasError = true;
+        } else if (!validateEmailPattern(emailInput.value.trim())) {
+            showInputError(emailInput, "Please enter a valid email address.");
+            hasError = true;
+        }
+
+        // 2. Password පරික්ෂාව
+        if (!passwordInput.value.trim()) {
+            showInputError(passwordInput, "Password is required.");
+            hasError = true;
+        }
+
+        // වැරැද්දක් තිබේ නම් Form එක PHP එකට යෑම වළක්වයි
+        if (hasError) {
+            event.preventDefault();
+        }
+    });
+}
+
+function validateRegisterForm() {
+    const registerForm = document.querySelector('form[action="register.php"]');
+    if (!registerForm) return;
+
+    registerForm.addEventListener("submit", (event) => {
+        const nameInput = document.getElementById("full_name");
+        const emailInput = document.getElementById("email") || document.getElementById("register_email");
+        const passwordInput = document.getElementById("password") || document.getElementById("register_password");
+        const confirmInput = document.getElementById("confirm_password");
+
+        removeExistingErrors(registerForm);
+
+        let hasError = false;
+
+        // 1. නම පරික්ෂාව
+        if (!nameInput.value.trim()) {
+            showInputError(nameInput, "Full name is required.");
+            hasError = true;
+        }
+
+        // 2. Email පරික්ෂාව
+        if (!emailInput.value.trim()) {
+            showInputError(emailInput, "Email address is required.");
+            hasError = true;
+        } else if (!validateEmailPattern(emailInput.value.trim())) {
+            showInputError(emailInput, "Please enter a valid email address.");
+            hasError = true;
+        }
+
+        // 3. Password දිග පරික්ෂාව (අවම අකුරු 6ක්)
+        if (!passwordInput.value.trim()) {
+            showInputError(passwordInput, "Password is required.");
+            hasError = true;
+        } else if (passwordInput.value.length < 6) {
+            showInputError(passwordInput, "Password must be at least 6 characters long.");
+            hasError = true;
+        }
+
+        // 4. Confirm Password ගැලපේදැයි බැලීම
+        if (passwordInput.value !== confirmInput.value) {
+            showInputError(confirmInput, "Passwords do not match.");
+            hasError = true;
+        }
+
+        if (hasError) {
+            event.preventDefault();
+        }
+    });
+}
+
+// Email එක සැබෑ එකක්දැයි බලන පොදු ශ්‍රිතය (Regex)
+function validateEmailPattern(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+// Input එක පල්ලෙහායින් රතු පාටින් Error එක පෙන්වීම
+function showInputError(inputElement, message) {
+    inputElement.style.borderColor = "#ef4444"; // රතු පාට Border එකක් දීම
+    
+    const errorBox = document.createElement("p");
+    errorBox.className = "js-input-error";
+    errorBox.style.color = "#ef4444";
+    errorBox.style.fontSize = "13px";
+    errorBox.style.marginTop = "4px";
+    errorBox.style.marginBottom = "12px";
+    errorBox.textContent = message;
+    
+    inputElement.insertAdjacentElement("afterend", errorBox);
+}
+
+// කලින් දාපු Errors මැකීම
+function removeExistingErrors(formElement) {
+    formElement.querySelectorAll(".js-input-error").forEach(el => el.remove());
+    formElement.querySelectorAll("input").forEach(input => input.style.borderColor = "");
+}
+
+// පිටුව Load වන විට මේවා ක්‍රියාත්මක කරවීම
+document.addEventListener("DOMContentLoaded", () => {
+    validateLoginForm();
+    validateRegisterForm();
+});

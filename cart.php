@@ -1,36 +1,59 @@
+<?php
+// 1. Session එක සහ Database එක මුලින්ම ඇතුළත් කරන්න
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once 'database.php'; 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>QuickBite</title>
     <link rel="stylesheet" href="css/cart.css">
 </head>
-<body>
+<body data-user-id="<?php echo $_SESSION['user_id'] ?? ''; ?>">
 
-<header class="site-header">
-    <div class="header-inner">
+    <header class="site-header">
+      <div class="header-inner">
         <div class="brand">
-            <img src="logo1.png" class="logo" alt="QuickBite logo">
-            <h1 class="site-title">QuickBite</h1>
+          <img src="logo1.png" class="logo" alt="QuickBite logo">
+          <h1 class="site-title">QuickBite</h1>
         </div>
 
         <nav class="main-nav" aria-label="Main navigation">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="menu.html">Menu</a></li>
-            </ul>
+          <ul>
+            <li><a href="index.php">Home</a></li> 
+            <li><a href="menu.php">Menu</a></li>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <li><a href="myorders.php">My Orders</a></li>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+                <li><a href="admin.php" style="color: #e67e22; font-weight: bold;">Admin Panel</a></li>
+            <?php endif; ?>
+          </ul>
         </nav>
 
         <div class="header-actions">
-            <a href="cart.html" class="cart-btn">Cart</a>
-            <a href="login.html" class="login-link">Login</a>
+          <a href="cart.php" class="cart-btn">Cart</a>
+          
+          <!-- 2. Session එක ඇත්දැයි නිවැරදිවම පරීක්ෂා කිරීම -->
+          <?php if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])): ?>
+              <span class="user-welcome" style="margin-right: 15px; color: #fbf4f4; font-weight: bold;">
+                  Hi, <?php echo htmlspecialchars($_SESSION['user_name'], ENT_QUOTES, 'UTF-8'); ?>
+              </span>
+              <a href="logout.php" class="login-link">Logout</a>
+          <?php else: ?>
+              <a href="login.html" class="login-link">Login</a>
+          <?php endif; ?>
+          
         </div>
-    </div>
-</header>
+      </div>
+    </header>
 
 <main class="cart-page">
-    <a href="menu.html" class="back-link">Continue Shopping</a>
+    <a href="menu.php" class="back-link">Continue Shopping</a>
 
     <div class="cart-layout">
         <section class="cart-panel">
@@ -61,7 +84,9 @@
                 <strong id="summary-total">Rs.0</strong>
             </div>
 
-            <button type="button" class="checkout-btn">Proceed to Checkout</button>
+            <a href="checkout.php" style="text-decoration: none; display: block;">
+                <button type="button" class="checkout-btn" style="width: 100%;">Proceed to Checkout</button>
+            </a>
             <p class="summary-note">Secure checkout powered by our system</p>
         </aside>
     </div>
@@ -69,7 +94,7 @@
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-section">
-      <h2>Delicious Bites</h2>
+      <h2>Quick Bites</h2>
       <p>Order delicious food from the comfort of your home.</p>
     </div>
     <div class="footer-section">
@@ -83,7 +108,7 @@
     <div class="footer-section">
       <h3>Contact</h3>
       <p>Phone: (555) 123-4567</p>
-      <p>Email: info@deliciousbites.com</p>
+      <p>Email: info@quickbites.com</p>
       <p>Hours: 9 AM - 10 PM</p>
     </div>
     <div class="footer-section">
@@ -97,7 +122,7 @@
   </div>
   <hr>
   <div class="footer-bottom">
-    <p>© 2026 Delicious Bites. All rights reserved.</p>
+    <p>© 2026 Quick Bites. All rights reserved.</p>
   </div>
 </footer>
 <script src="js/script.js"></script>
